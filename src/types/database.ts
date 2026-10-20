@@ -336,3 +336,33 @@ export interface GoalWithTasks extends Goal {
 export interface CoupleWithMembers extends Couple {
   members: (CoupleMember & { profile: Profile })[];
 }
+
+export interface Snap {
+  id: string;
+  couple_id: string;
+  user_id: string;
+  image_url: string;
+  caption: string | null;
+  created_at: string;
+}
+
+export interface ChatGroup {
+  id: string;
+  couple_id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  created_by: string;
+  created_at: string;
+}
+
+export interface GroupMessage {
+  id: string;
+  group_id: string;
+  couple_id: string;
+  sender_id: string;
+  content: string | null;
+  image_url: string | null;
+  created_at: string;
+  sender?: Pick<Profile, 'display_name' | 'avatar_url'>;
+}

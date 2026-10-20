@@ -1,5 +1,7 @@
 import { getHomeDashboardData } from '@/features/home/actions';
+import { getLatestSnap } from '@/features/locket/actions';
 import { HeroSection } from '@/features/home/components/hero-section';
+import { LocketWidget } from '@/features/locket/components/locket-widget';
 import { PartnerMoodCard } from '@/features/home/components/partner-mood-card';
 import { LittleNoteCard } from '@/features/home/components/little-note-card';
 import { TodayQuestionCard } from '@/features/home/components/today-question-card';
@@ -9,12 +11,15 @@ import { RecentMemoryCard } from '@/features/home/components/recent-memory-card'
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const data = await getHomeDashboardData();
+  const [data, latestSnap] = await Promise.all([
+    getHomeDashboardData(),
+    getLatestSnap(),
+  ]);
 
   if (!data) {
     return (
-      <div className="p-6 text-center text-muted-foreground">
-        Loading our space...
+      <div className="p-8 text-center text-xs text-muted-foreground">
+        Memuat ruang kita...
       </div>
     );
   }
@@ -31,7 +36,7 @@ export default async function HomePage() {
   } = data;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 md:px-8 md:py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-3.5 py-4 md:px-8 md:py-6 space-y-4 md:space-y-6">
       {/* 1. Greeting & Couple Hero */}
       <HeroSection
         userProfile={userProfile}
@@ -39,8 +44,16 @@ export default async function HomePage() {
         couple={couple}
       />
 
-      {/* 2. Grid of cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* 2. Locket Widget (Live Instant Photo / Instagram-style Snap) */}
+      <LocketWidget
+        coupleId={couple.id}
+        initialSnap={latestSnap}
+        userProfile={userProfile}
+        partnerProfile={partnerProfile}
+      />
+
+      {/* 3. Grid of cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-5">
         {/* Partner Mood from latest check-in */}
         <PartnerMoodCard
           partnerProfile={partnerProfile}
@@ -57,7 +70,7 @@ export default async function HomePage() {
         <NextDateCard nextEvent={nextEvent} />
       </div>
 
-      {/* 3. Full-width or featured: Recent Memory */}
+      {/* 4. Full-width: Recent Memory */}
       <div className="w-full">
         <RecentMemoryCard memory={recentMemory} />
       </div>

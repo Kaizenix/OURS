@@ -1,29 +1,37 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Image, X, Loader2, MessageSquareQuote, Mic, Trash2, StopCircle, Upload } from 'lucide-react';
+import {
+  Send,
+  Image as ImageIcon,
+  Mic,
+  Square,
+  X,
+  MessageSquareQuote,
+  Loader2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import type { MessageWithSender } from '@/types/database';
-import { useAudioRecorder } from '@/features/chat/hooks/use-audio-recorder';
+import { useAudioRecorder } from '../hooks/use-audio-recorder';
 import { uploadFileToStorage } from '@/lib/supabase/storage';
+import type { MessageWithSender } from '@/types/database';
 
 interface ChatInputProps {
   onSendMessage: (content: string, imageUrl?: string | null) => Promise<void>;
+  onTyping: () => void;
   replyingTo: MessageWithSender | null;
   onCancelReply: () => void;
   discussQuestion?: string | null;
   onClearDiscussQuestion?: () => void;
-  onTyping: () => void;
 }
 
 export function ChatInput({
   onSendMessage,
+  onTyping,
   replyingTo,
   onCancelReply,
   discussQuestion,
   onClearDiscussQuestion,
-  onTyping,
 }: ChatInputProps) {
   const [content, setContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -43,7 +51,7 @@ export function ChatInput({
 
   useEffect(() => {
     if (discussQuestion) {
-      setContent(`Regarding today's question: "${discussQuestion}" — `);
+      setContent(`Tentang pertanyaan hari ini: "${discussQuestion}" — `);
       inputRef.current?.focus();
     }
   }, [discussQuestion]);
@@ -90,7 +98,6 @@ export function ChatInput({
 
     setSending(true);
     try {
-      // Store voice note in content or storage
       await onSendMessage(`🎤 Voice note (${result.durationSeconds}s): ${result.url}`);
     } finally {
       setSending(false);
@@ -112,14 +119,14 @@ export function ChatInput({
   };
 
   return (
-    <div className="sticky bottom-0 z-20 bg-background/90 backdrop-blur-md border-t border-border/40 p-3 md:p-4">
+    <div className="sticky bottom-0 z-20 bg-background/95 border-t border-border/40 p-2.5 md:p-3">
       {/* Replying banner */}
       {replyingTo && (
         <div className="flex items-center justify-between px-3 py-1.5 mb-2 rounded-xl bg-card border border-border/40 text-xs">
           <div className="truncate">
-            <span className="text-primary font-medium">Replying to: </span>
+            <span className="text-primary font-medium">Membalas: </span>
             <span className="text-muted-foreground truncate">
-              {replyingTo.content || 'Photo attachment'}
+              {replyingTo.content || 'Lampiran foto'}
             </span>
           </div>
           <button
@@ -136,149 +143,109 @@ export function ChatInput({
         <div className="flex items-center justify-between px-3 py-1.5 mb-2 rounded-xl bg-primary/10 border border-primary/20 text-xs">
           <div className="flex items-center gap-1.5 truncate text-primary font-medium">
             <MessageSquareQuote className="w-3.5 h-3.5 shrink-0" />
-            <span className="truncate">Discussing: &ldquo;{discussQuestion}&rdquo;</span>
+            <span className="truncate">Membahas: &ldquo;{discussQuestion}&rdquo;</span>
           </div>
-          {onClearDiscussQuestion && (
-            <button
-              onClick={onClearDiscussQuestion}
-              className="p-1 text-primary hover:text-primary/70"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+          <button
+            onClick={onClearDiscussQuestion}
+            className="p-1 text-primary/70 hover:text-primary"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Image Attachment Preview Drawer */}
-      {showImageInput && (
-        <div className="flex items-center gap-2 mb-2 p-2 rounded-2xl bg-card border border-border/40">
-          {imageUrl ? (
-            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-background border border-border/50 shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageUrl} alt="Attachment" className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => setImageUrl('')}
-                className="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ) : null}
-
-          <Input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="Paste photo URL or pick from device..."
-            className="h-9 text-xs rounded-xl bg-background border-border/50 flex-1"
-          />
-
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingImage}
-            className="h-9 px-2.5 text-xs rounded-xl gap-1"
+      {/* Image Preview attachment */}
+      {showImageInput && imageUrl && (
+        <div className="relative inline-block mb-2 rounded-xl overflow-hidden border border-border max-w-[120px]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={imageUrl} alt="Lampiran" className="w-24 h-24 object-cover" />
+          <button
+            onClick={() => {
+              setImageUrl('');
+              setShowImageInput(false);
+            }}
+            className="absolute top-1 right-1 p-1 rounded-full bg-black/60 text-white hover:bg-black"
           >
-            {uploadingImage ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-            <span>File</span>
-          </Button>
-
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setShowImageInput(false)}
-            className="h-9 px-2 text-xs text-muted-foreground"
-          >
-            Done
-          </Button>
+            <X className="w-3 h-3" />
+          </button>
         </div>
       )}
 
-      {/* Hidden file input for native device images */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/*"
-        className="hidden"
-      />
-
-      {/* Recording Mode Bar */}
+      {/* Audio Recording State */}
       {isRecording ? (
-        <div className="flex items-center justify-between gap-3 bg-primary/10 border border-primary/30 rounded-2xl p-2 px-4 animate-pulse">
-          <div className="flex items-center gap-2 text-primary text-xs font-medium">
-            <span className="w-2.5 h-2.5 rounded-full bg-primary animate-ping" />
-            <span>Recording voice note... {formatTimer(recordingSeconds)}</span>
+        <div className="flex items-center justify-between gap-3 bg-primary/10 border border-primary/20 rounded-2xl px-4 py-2.5">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+            <span className="text-xs font-mono font-medium text-primary">
+              Merekam {formatTimer(recordingSeconds)}
+            </span>
           </div>
-
           <div className="flex items-center gap-2">
             <button
-              type="button"
               onClick={cancelRecording}
-              className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title="Cancel recording"
+              className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
             >
-              <Trash2 className="w-4 h-4" />
+              Batal
             </button>
             <Button
-              type="button"
-              size="sm"
               onClick={handleSendVoiceNote}
+              size="sm"
               disabled={sending}
-              className="rounded-xl h-8 px-3 text-xs gap-1.5"
+              className="h-8 rounded-xl bg-primary text-primary-foreground text-xs gap-1"
             >
-              <Send className="w-3 h-3" />
-              <span>Send</span>
+              <Square className="w-3 h-3 fill-current" />
+              <span>Kirim</span>
             </Button>
           </div>
         </div>
       ) : (
-        /* Main Input Bar */
-        <form onSubmit={handleSubmit} className="flex items-center gap-2">
-          {/* Image button */}
+        <form onSubmit={handleSubmit} className="flex items-center gap-1.5">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+
           <button
             type="button"
-            onClick={() => setShowImageInput(!showImageInput)}
-            className={`p-2.5 rounded-2xl border transition-colors ${
-              showImageInput || imageUrl
-                ? 'bg-primary/15 border-primary text-primary'
-                : 'bg-card border-border/40 text-muted-foreground hover:text-foreground'
-            }`}
-            title="Attach image from camera/gallery"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingImage}
+            aria-label="Pilih foto"
+            className="p-2.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
           >
-            <Image className="w-4 h-4" />
+            {uploadingImage ? (
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+            ) : (
+              <ImageIcon className="w-4 h-4" />
+            )}
           </button>
 
-          {/* Voice note recorder button */}
           <button
             type="button"
             onClick={startRecording}
-            className="p-2.5 rounded-2xl border bg-card border-border/40 text-muted-foreground hover:text-primary transition-colors"
-            title="Record voice note"
+            aria-label="Rekam pesan suara"
+            className="p-2.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
           >
             <Mic className="w-4 h-4" />
           </button>
 
-          <div className="relative flex-1">
-            <Input
-              ref={inputRef}
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value);
-                onTyping();
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Say something to your love..."
-              className="h-11 rounded-2xl bg-card border-border/40 focus:border-primary text-sm pr-10"
-            />
-          </div>
+          <Input
+            ref={inputRef}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Tulis pesan untuknya..."
+            disabled={sending}
+            className="flex-1 h-10 rounded-2xl bg-card border-border/40 focus:border-primary text-sm px-3.5"
+          />
 
           <Button
             type="submit"
+            size="sm"
             disabled={(!content.trim() && !imageUrl.trim()) || sending}
-            className="h-11 w-11 rounded-2xl p-0 flex items-center justify-center shrink-0"
+            className="h-10 w-10 p-0 rounded-full shrink-0 shadow-xs"
           >
             {sending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

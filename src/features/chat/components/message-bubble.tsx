@@ -8,7 +8,6 @@ import {
   Edit2,
   Trash2,
   Bookmark,
-  Check,
   CheckCheck,
 } from 'lucide-react';
 import {
@@ -52,15 +51,34 @@ export function MessageBubble({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.2 }}
-      className={`group relative flex flex-col mb-3 ${isOwn ? 'items-end' : 'items-start'}`}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.15 }}
+      className={`group relative flex flex-col mb-2.5 ${isOwn ? 'items-end' : 'items-start'}`}
     >
-      <div className={`flex items-end gap-1.5 max-w-[85%] sm:max-w-[75%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+      <div className={`flex items-end gap-1.5 max-w-[88%] sm:max-w-[75%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+        {/* Partner avatar if incoming message */}
+        {!isOwn && (
+          <div className="w-7 h-7 rounded-full overflow-hidden border border-border/60 bg-surface shrink-0 self-end mb-1 flex items-center justify-center text-[10px] font-serif shadow-xs">
+            {message.sender?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={message.sender.avatar_url}
+                alt={message.sender?.display_name || 'Pasangan'}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <span>{(message.sender?.display_name || 'P').charAt(0).toUpperCase()}</span>
+            )}
+          </div>
+        )}
+
         {/* The Bubble */}
         <div
-          className={`relative rounded-3xl px-4 py-2.5 text-sm transition-all shadow-xs ${
+          className={`relative rounded-2xl px-3.5 py-2 text-sm transition-all shadow-xs ${
             isOwn
               ? 'bg-primary text-primary-foreground rounded-br-xs'
               : 'bg-card text-foreground rounded-bl-xs border border-border/40'
@@ -68,9 +86,9 @@ export function MessageBubble({
         >
           {/* Pinned as Memory Badge */}
           {message.is_memory && (
-            <div className="flex items-center gap-1 text-[11px] font-medium opacity-80 mb-1 border-b border-current/20 pb-1">
+            <div className="flex items-center gap-1 text-[11px] font-medium opacity-85 mb-1 border-b border-current/20 pb-1">
               <Bookmark className="w-3 h-3 fill-current" />
-              <span>Saved to Memories</span>
+              <span>Disimpan di Kenangan</span>
             </div>
           )}
 
@@ -81,19 +99,20 @@ export function MessageBubble({
                 isOwn ? 'border-primary-foreground/50' : 'border-primary'
               }`}
             >
-              <span className="font-semibold block text-[10px] uppercase opacity-75">Replying to</span>
-              <span className="truncate block">Quoted message</span>
+              <span className="font-semibold block text-[10px] uppercase opacity-75">Membalas</span>
+              <span className="truncate block">Pesan kutipan</span>
             </div>
           )}
 
           {/* Image Attachment */}
           {message.image_url && (
-            <div className="mb-2 overflow-hidden rounded-2xl max-w-sm">
+            <div className="mb-2 overflow-hidden rounded-xl max-w-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={message.image_url}
-                alt="Shared attachment"
-                className="w-full h-auto object-cover max-h-72 rounded-2xl"
+                alt="Foto bersama"
+                loading="lazy"
+                className="w-full h-auto object-cover max-h-72 rounded-xl"
               />
             </div>
           )}
@@ -106,7 +125,7 @@ export function MessageBubble({
                 isOwn={isOwn}
               />
             ) : (
-              <p className="whitespace-pre-wrap leading-relaxed select-text font-sans">
+              <p className="whitespace-pre-wrap leading-relaxed select-text font-sans text-[13.5px]">
                 {message.content}
               </p>
             )
@@ -114,11 +133,11 @@ export function MessageBubble({
 
           {/* Footer info: time, edited, status */}
           <div
-            className={`flex items-center justify-end gap-1.5 mt-1 text-[10px] ${
+            className={`flex items-center justify-end gap-1.5 mt-0.5 text-[10px] ${
               isOwn ? 'text-primary-foreground/75' : 'text-muted-foreground'
             }`}
           >
-            {message.is_edited && <span>(edited)</span>}
+            {message.is_edited && <span>(diedit)</span>}
             <span>{formatTimePretty(message.created_at)}</span>
             {isOwn && (
               <CheckCheck className="w-3 h-3 opacity-80" />
@@ -131,57 +150,56 @@ export function MessageBubble({
           <DropdownMenu>
             <DropdownMenuTrigger
               className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              title="Options"
+              title="Opsi"
             >
               <MoreHorizontal className="w-4 h-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="rounded-2xl min-w-[140px]">
+            <DropdownMenuContent align={isOwn ? 'end' : 'start'} className="rounded-xl min-w-[140px]">
               <DropdownMenuItem onClick={() => onReply(message)} className="gap-2 text-xs">
                 <Reply className="w-3.5 h-3.5" />
-                <span>Reply</span>
+                <span>Balas</span>
               </DropdownMenuItem>
 
               <DropdownMenuItem onClick={() => onPinToMemory(message.id)} className="gap-2 text-xs">
                 <Bookmark className="w-3.5 h-3.5" />
-                <span>Pin to Memories</span>
+                <span>Jadikan Kenangan</span>
               </DropdownMenuItem>
 
               {isOwn && (
                 <>
                   <DropdownMenuItem onClick={() => onEdit(message)} className="gap-2 text-xs">
                     <Edit2 className="w-3.5 h-3.5" />
-                    <span>Edit</span>
+                    <span>Edit Pesan</span>
                   </DropdownMenuItem>
-
                   <DropdownMenuItem
                     onClick={() => onDelete(message.id)}
                     className="gap-2 text-xs text-destructive focus:text-destructive"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    <span>Delete</span>
+                    <span>Hapus Pesan</span>
                   </DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Quick emoji reaction toggle */}
+          {/* Reaction trigger */}
           <button
             onClick={() => setShowReactionsBar(!showReactionsBar)}
             className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors text-xs"
-            title="React"
+            title="Beri Reaksi"
           >
-            😊
+            ❤️
           </button>
         </div>
       </div>
 
-      {/* Floating Reaction Picker */}
+      {/* Floating Reaction Bar */}
       {showReactionsBar && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`flex items-center gap-1 p-1 bg-surface border border-border/50 rounded-full shadow-lg z-20 mt-1 ${
+          className={`flex items-center gap-1 p-1 mt-1 rounded-full bg-card border border-border/50 shadow-md ${
             isOwn ? 'mr-2' : 'ml-2'
           }`}
         >
@@ -192,7 +210,7 @@ export function MessageBubble({
                 onReact(message.id, emoji);
                 setShowReactionsBar(false);
               }}
-              className="p-1.5 hover:scale-125 transition-transform text-sm"
+              className="w-7 h-7 flex items-center justify-center hover:scale-125 transition-transform text-sm"
             >
               {emoji}
             </button>
@@ -200,17 +218,19 @@ export function MessageBubble({
         </motion.div>
       )}
 
-      {/* Reaction Clusters displayed below bubble */}
+      {/* Displayed Reactions badges */}
       {Object.keys(reactionCounts).length > 0 && (
-        <div className={`flex flex-wrap gap-1 mt-1 ${isOwn ? 'mr-1 justify-end' : 'ml-1 justify-start'}`}>
+        <div
+          className={`flex flex-wrap gap-1 mt-1 ${isOwn ? 'mr-1 justify-end' : 'ml-8 justify-start'}`}
+        >
           {Object.entries(reactionCounts).map(([emoji, count]) => (
             <button
               key={emoji}
               onClick={() => onReact(message.id, emoji)}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs bg-surface border border-border/50 text-foreground hover:scale-105 transition-transform shadow-2xs"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] bg-card border border-border/40 text-foreground shadow-xs hover:border-primary/40 transition-colors"
             >
               <span>{emoji}</span>
-              {count > 1 && <span className="text-[10px] text-muted-foreground font-mono">{count}</span>}
+              {count > 1 && <span className="text-[10px] opacity-75">{count}</span>}
             </button>
           ))}
         </div>

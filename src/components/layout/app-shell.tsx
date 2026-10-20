@@ -32,23 +32,24 @@ interface AppShellProps {
 export function AppShell({ children, profile, couple, coupleId, partner }: AppShellProps) {
   return (
     <CoupleContext.Provider value={{ profile, couple, coupleId, partner }}>
-      <div className="min-h-dvh flex">
+      <div className="h-dvh w-full flex overflow-hidden bg-background text-foreground select-none touch-manipulation">
         {/* Desktop Sidebar */}
-        <div className="hidden md:flex">
+        <div className="hidden md:flex shrink-0">
           <Sidebar />
         </div>
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col min-h-dvh">
+        {/* Main Content Area */}
+        <main className="flex-1 flex flex-col h-full overflow-hidden relative">
           {/* Mobile Top Header */}
           <TopHeader />
 
-          <div className="flex-1 overflow-y-auto pb-20 md:pb-4">
+          {/* Scrollable Viewport */}
+          <div className="flex-1 overflow-y-auto overscroll-y-contain pb-20 md:pb-4 will-change-scroll">
             {children}
           </div>
 
           {/* Mobile Bottom Nav */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-40">
             <BottomNav />
           </div>
         </main>

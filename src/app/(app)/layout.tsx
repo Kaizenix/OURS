@@ -26,20 +26,30 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   if (!membership) redirect('/onboarding');
 
-  // Get partner info
-  const { data: partner } = await supabase
+  // Get partner info directly
+  const { data: partnerMember } = await supabase
     .from('couple_members')
-    .select('user_id, profiles(*)')
+    .select('user_id')
     .eq('couple_id', membership.couple_id)
     .neq('user_id', user.id)
-    .single();
+    .maybeSingle();
+
+  let partner: Parameters<typeof AppShell>[0]['partner'] = null;
+  if (partnerMember?.user_id) {
+    const { data: p } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', partnerMember.user_id)
+      .maybeSingle();
+    partner = p as Parameters<typeof AppShell>[0]['partner'];
+  }
 
   return (
     <AppShell
       profile={profile}
       couple={membership.couples as unknown as Parameters<typeof AppShell>[0]['couple']}
       coupleId={membership.couple_id}
-      partner={partner?.profiles as unknown as Parameters<typeof AppShell>[0]['partner']}
+      partner={partner}
     >
       {children}
     </AppShell>

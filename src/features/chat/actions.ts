@@ -33,16 +33,23 @@ export async function getChatInitialData(): Promise<ChatInitialData | null> {
   if (!membership) return null;
   const coupleId = membership.couple_id;
 
+  // Direct lookup of partner user_id
   const { data: partnerMember } = await supabase
     .from('couple_members')
-    .select('user_id, profiles(*)')
+    .select('user_id')
     .eq('couple_id', coupleId)
     .neq('user_id', user.id)
     .maybeSingle();
 
-  const partnerProfile = partnerMember && partnerMember.profiles
-    ? (partnerMember as unknown as { profiles: Profile }).profiles
-    : null;
+  let partnerProfile: Profile | null = null;
+  if (partnerMember?.user_id) {
+    const { data: p } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', partnerMember.user_id)
+      .maybeSingle();
+    partnerProfile = p;
+  }
 
   // Fetch messages with sender profile and reactions
   const { data: messages } = await supabase

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { HelpCircle, CheckCircle2, Clock, Sparkles, ArrowRight } from 'lucide-react';
+import { MessageSquareQuote, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
 import type { QuestionBankItem, DailyAnswer } from '@/types/database';
 
 interface TodayQuestionCardProps {
@@ -16,71 +16,55 @@ interface TodayQuestionCardProps {
 }
 
 export function TodayQuestionCard({ todayQuestion }: TodayQuestionCardProps) {
-  if (!todayQuestion) {
-    return (
-      <div className="rounded-3xl bg-surface/70 border border-border/40 p-6 backdrop-blur-sm shadow-sm flex flex-col justify-between">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
-          Daily Question
-        </span>
-        <p className="text-sm text-muted-foreground my-4">
-          No question assigned for today yet.
-        </p>
-      </div>
-    );
-  }
-
-  const { question, userAnswer, isRevealed } = todayQuestion;
-  const hasUserAnswered = Boolean(userAnswer);
+  const answeredCount = (todayQuestion?.userAnswer ? 1 : 0) + (todayQuestion?.partnerAnswer ? 1 : 0);
+  const isBothAnswered = todayQuestion?.isRevealed ?? false;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="rounded-3xl bg-surface/70 border border-border/40 p-6 backdrop-blur-sm shadow-sm flex flex-col justify-between"
+      transition={{ duration: 0.25, delay: 0.15 }}
+      className="rounded-3xl bg-surface/80 border border-border/40 p-5 shadow-xs flex flex-col justify-between select-none"
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-            <HelpCircle className="w-3.5 h-3.5 text-primary" />
-            Today&apos;s Question
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+            Pertanyaan Hari Ini
           </span>
-          <span className="text-[11px] capitalize px-2 py-0.5 rounded-full bg-secondary/30 text-secondary-foreground font-medium">
-            {question.category?.replace(/_/g, ' ') || 'Connection'}
-          </span>
+          <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full">
+            {isBothAnswered ? (
+              <span className="text-emerald-500 flex items-center gap-1 font-medium">
+                <CheckCircle2 className="w-3 h-3" />
+                Terbuka Berdua
+              </span>
+            ) : answeredCount === 1 ? (
+              <span className="text-amber-500 flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                1 sudah menjawab
+              </span>
+            ) : (
+              <span>Menunggu jawaban</span>
+            )}
+          </div>
         </div>
 
-        <p className="text-base sm:text-lg font-serif text-foreground font-medium leading-snug my-2">
-          &ldquo;{question.question}&rdquo;
-        </p>
-
-        {/* Status display */}
-        <div className="mt-4">
-          {isRevealed ? (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Both answered — answers revealed!</span>
-            </div>
-          ) : hasUserAnswered ? (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 text-amber-400 text-xs font-medium border border-amber-500/20">
-              <Clock className="w-3.5 h-3.5" />
-              <span>You answered. Waiting for partner</span>
-            </div>
-          ) : (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Awaiting your answer</span>
-            </div>
-          )}
+        <div className="bg-card/60 rounded-2xl p-3.5 border border-border/30 my-2">
+          <div className="flex items-start gap-2.5">
+            <MessageSquareQuote className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-xs font-serif text-foreground leading-relaxed line-clamp-3">
+              {todayQuestion?.question?.question ||
+                'Apa satu hal sederhana yang aku lakukan baru-baru ini yang membuatmu merasa sangat dicintai?'}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="mt-5 pt-3 border-t border-border/30">
+      <div className="pt-3 border-t border-border/20 flex justify-end">
         <Link
           href="/daily"
-          className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
+          className="text-xs text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
         >
-          <span>{isRevealed ? 'View & discuss answers' : hasUserAnswered ? 'View your answer' : 'Answer today\'s question'}</span>
+          <span>{isBothAnswered ? 'Lihat Jawaban' : 'Jawab Sekarang'}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

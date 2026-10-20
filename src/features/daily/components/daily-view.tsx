@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, HeartHandshake, HelpCircle } from 'lucide-react';
+import { HeartHandshake, HelpCircle, Sparkles } from 'lucide-react';
 import type { DailyPageData } from '@/features/daily/actions';
 import { CheckinForm } from './checkin-form';
 import { PartnerCheckinDisplay } from './partner-checkin-display';
@@ -23,23 +23,21 @@ export function DailyView({ data }: DailyViewProps) {
     todayQuestion,
   } = data;
 
-  const partnerName = partnerProfile?.display_name || 'Partner';
-
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 md:py-8 space-y-6">
+    <div className="max-w-3xl mx-auto px-4 py-4 md:px-6 md:py-6 space-y-5 select-none">
       {/* Top Tabs */}
       <div className="flex justify-center">
-        <div className="inline-flex p-1.5 rounded-2xl bg-surface/80 border border-border/40 backdrop-blur-sm">
+        <div className="inline-flex p-1 rounded-2xl bg-surface/80 border border-border/40">
           <button
             onClick={() => setActiveTab('question')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTab === 'question'
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-primary text-primary-foreground shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>Today&apos;s Question</span>
+            <span>Pertanyaan Hari Ini</span>
             {todayQuestion?.isRevealed && (
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
             )}
@@ -47,14 +45,14 @@ export function DailyView({ data }: DailyViewProps) {
 
           <button
             onClick={() => setActiveTab('checkin')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium transition-all ${
               activeTab === 'checkin'
-                ? 'bg-primary text-primary-foreground shadow-sm'
+                ? 'bg-primary text-primary-foreground shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <HeartHandshake className="w-3.5 h-3.5" />
-            <span>Daily Check-in</span>
+            <span>Kondisi Harian</span>
             {userCheckin && (
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
             )}
@@ -62,14 +60,12 @@ export function DailyView({ data }: DailyViewProps) {
         </div>
       </div>
 
-      {/* Tab Content */}
       {activeTab === 'question' && (
         <motion.div
-          key="question-tab"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-6"
+          transition={{ duration: 0.2 }}
+          className="space-y-4"
         >
           {todayQuestion ? (
             <QuestionSection
@@ -78,9 +74,9 @@ export function DailyView({ data }: DailyViewProps) {
               partnerProfile={partnerProfile}
             />
           ) : (
-            <div className="p-8 text-center text-muted-foreground rounded-3xl bg-surface/50 border border-border/40">
-              <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-30" />
-              <p className="text-sm">No question available for today yet.</p>
+            <div className="p-8 text-center text-xs text-muted-foreground bg-card/40 rounded-3xl border border-border/40">
+              <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
+              <p>Belum ada pertanyaan aktif untuk hari ini.</p>
             </div>
           )}
         </motion.div>
@@ -88,20 +84,27 @@ export function DailyView({ data }: DailyViewProps) {
 
       {activeTab === 'checkin' && (
         <motion.div
-          key="checkin-tab"
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
           className="space-y-6"
         >
-          {/* Partner's condition card */}
+          {/* Partner's Check-in card if available */}
           <PartnerCheckinDisplay
             partnerProfile={partnerProfile}
             partnerCheckin={partnerCheckin}
           />
 
           {/* User's own check-in form */}
-          <CheckinForm existingCheckin={userCheckin} />
+          <div className="pt-2">
+            <div className="mb-3 px-1">
+              <h3 className="font-serif text-lg font-medium">Kondisi Anda Hari Ini</h3>
+              <p className="text-xs text-muted-foreground">
+                Bagikan perasaan, tingkat energi, dan apa yang Anda butuhkan secara jujur.
+              </p>
+            </div>
+            <CheckinForm existingCheckin={userCheckin} />
+          </div>
         </motion.div>
       )}
     </div>

@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, MessageCircle, Sun, Image, Users } from 'lucide-react';
+import { Home, MessageCircle, Sun, Image as ImageIcon, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from 'cn';
+import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
 
 interface NavItem {
@@ -14,11 +14,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/home', label: 'Home', icon: Home },
-  { href: '/chat', label: 'Chat', icon: MessageCircle },
-  { href: '/daily', label: 'Daily', icon: Sun },
-  { href: '/memories', label: 'Memories', icon: Image },
-  { href: '/us', label: 'Us', icon: Users },
+  { href: '/home', label: 'Beranda', icon: Home },
+  { href: '/chat', label: 'Obrolan', icon: MessageCircle },
+  { href: '/daily', label: 'Harian', icon: Sun },
+  { href: '/memories', label: 'Kenangan', icon: ImageIcon },
+  { href: '/us', label: 'Kita', icon: Users },
 ];
 
 export function BottomNav() {
@@ -26,13 +26,13 @@ export function BottomNav() {
 
   return (
     <nav
-      className="border-t border-border/50 bg-surface/80 backdrop-blur-xl"
+      className="border-t border-border/40 bg-background/95 backdrop-blur-md select-none touch-manipulation shadow-lg"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="flex items-center justify-around px-2 h-14">
+      <div className="flex items-center justify-around px-1 h-16">
         {navItems.map((item) => {
           const isActive =
-            pathname === item.href || pathname.startsWith(`${item.href}/`);
+            pathname === item.href || (item.href !== '/home' && pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
 
           return (
@@ -40,23 +40,23 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'relative flex flex-col items-center justify-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors',
+                'relative flex flex-col items-center justify-center gap-1 flex-1 py-1 rounded-xl transition-all active:scale-95',
                 isActive
-                  ? 'text-primary'
+                  ? 'text-primary font-medium'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
               <div className="relative">
-                <Icon className="size-5" strokeWidth={isActive ? 2 : 1.5} />
+                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.6} />
                 {isActive && (
                   <motion.div
-                    layoutId="bottomNavIndicator"
-                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    layoutId="bottomNavDot"
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                   />
                 )}
               </div>
-              <span className="text-[10px] font-medium leading-tight">
+              <span className="text-[10px] leading-tight tracking-tight">
                 {item.label}
               </span>
             </Link>

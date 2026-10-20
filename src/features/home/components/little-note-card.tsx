@@ -1,119 +1,117 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, MailOpen, Sparkles } from 'lucide-react';
+import { Mail, MailOpen, ArrowRight, Sparkles } from 'lucide-react';
 import type { LittleNote } from '@/types/database';
-import { openNoteAction } from '@/features/home/actions';
-import { formatTimePretty, formatDatePretty } from '@/lib/date-utils';
 
 interface LittleNoteCardProps {
   note: LittleNote | null;
 }
 
 export function LittleNoteCard({ note }: LittleNoteCardProps) {
-  const [isOpen, setIsOpen] = useState(Boolean(note?.opened_at));
-  const [loading, setLoading] = useState(false);
-
-  const handleOpen = async () => {
-    if (!note || isOpen || loading) return;
-    setLoading(true);
-    try {
-      await openNoteAction(note.id);
-      setIsOpen(true);
-    } catch (err) {
-      console.error('Failed to open note', err);
-      // fallback state
-      setIsOpen(true);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [isOpen, setIsOpen] = useState(note ? !!note.opened_at : false);
 
   if (!note) {
     return (
-      <div className="rounded-3xl bg-surface/70 border border-border/40 p-6 backdrop-blur-sm shadow-sm flex flex-col items-center justify-center text-center py-8">
-        <Mail className="w-8 h-8 text-muted-foreground/30 mb-2" />
-        <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1">
-          Little Notes
-        </p>
-        <p className="text-xs text-muted-foreground max-w-[200px]">
-          No new sealed notes. You can leave one in the Notes section.
-        </p>
+      <div className="rounded-3xl bg-surface/80 border border-border/40 p-5 shadow-xs flex flex-col justify-between">
+        <div>
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium block mb-3">
+            Surat Kecil
+          </span>
+          <div className="py-6 text-center space-y-2">
+            <div className="w-10 h-10 rounded-full bg-muted/40 mx-auto flex items-center justify-center text-muted-foreground">
+              <Mail className="w-5 h-5 opacity-60" />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Belum ada surat kecil yang tersegel untukmu.
+            </p>
+          </div>
+        </div>
+        <div className="pt-3 border-t border-border/20 flex justify-end">
+          <Link
+            href="/us/notes"
+            className="text-xs text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
+          >
+            <span>Kirim Surat</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.15 }}
-      className="rounded-3xl bg-surface/70 border border-border/40 p-6 backdrop-blur-sm shadow-sm flex flex-col justify-between"
+      transition={{ duration: 0.25, delay: 0.1 }}
+      className="rounded-3xl bg-surface/80 border border-border/40 p-5 shadow-xs flex flex-col justify-between select-none"
     >
       <div>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            Little Note
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium">
+            Surat Kecil Tersegel
           </span>
-          <span className="text-[11px] text-muted-foreground">
-            {note.created_at ? formatDatePretty(note.created_at) : ''}
+          <span className="text-[10px] text-primary/80 flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full">
+            <Sparkles className="w-3 h-3" />
+            Dari Pasanganmu
           </span>
         </div>
 
-        <div className="mt-2">
+        <div className="my-2">
           <AnimatePresence mode="wait">
             {!isOpen ? (
               <motion.button
                 key="sealed"
-                onClick={handleOpen}
-                disabled={loading}
-                initial={{ scale: 0.98, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={() => setIsOpen(true)}
                 whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full text-left p-4 rounded-2xl bg-card/80 border border-border/50 hover:border-primary/50 transition-all cursor-pointer group shadow-sm"
+                whileTap={{ scale: 0.99 }}
+                className="w-full text-left p-4 rounded-2xl bg-gradient-to-br from-card via-card/80 to-primary/5 border border-primary/20 hover:border-primary/40 transition-all group shadow-xs"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary shrink-0 group-hover:scale-105 transition-transform">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-muted-foreground">Sealed for you</p>
-                    <p className="text-sm font-medium font-serif text-foreground group-hover:text-primary transition-colors">
-                      {note.title || 'Open when you wake up'}
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-serif font-medium text-foreground truncate">
+                      &ldquo;{note.title}&rdquo;
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      Ketuk untuk membuka segel surat
                     </p>
                   </div>
-                </div>
-                <div className="mt-3 text-center text-xs text-primary/80 font-medium">
-                  {loading ? 'Opening...' : 'Tap to break seal & read'}
                 </div>
               </motion.button>
             ) : (
               <motion.div
                 key="opened"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="p-4 rounded-2xl bg-card/80 border border-border/40 space-y-2.5"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 rounded-2xl bg-card border border-border/40 shadow-xs space-y-2"
               >
                 <div className="flex items-center gap-2 text-xs text-primary font-medium">
-                  <MailOpen className="w-3.5 h-3.5" />
+                  <MailOpen className="w-4 h-4" />
                   <span>{note.title}</span>
                 </div>
-                <p className="text-sm text-foreground/90 font-serif leading-relaxed italic whitespace-pre-line">
-                  &ldquo;{note.content}&rdquo;
+                <p className="text-xs text-foreground/90 leading-relaxed font-serif whitespace-pre-wrap pl-6 border-l-2 border-primary/40">
+                  {note.content}
                 </p>
-                <div className="text-[11px] text-muted-foreground pt-1 flex justify-between">
-                  <span>Opened</span>
-                  <span>{note.opened_at ? formatTimePretty(note.opened_at) : 'Just now'}</span>
-                </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+      </div>
+
+      <div className="pt-3 border-t border-border/20 flex justify-end">
+        <Link
+          href="/us/notes"
+          className="text-xs text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
+        >
+          <span>Buka Semua Surat</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
     </motion.div>
   );

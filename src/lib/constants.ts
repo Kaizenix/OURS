@@ -1,41 +1,41 @@
 export const APP_NAME = 'OURS';
-export const APP_DESCRIPTION = 'A place that\'s only ours.';
+export const APP_DESCRIPTION = 'Ruang digital privat berdua.';
 
 export const MOOD_OPTIONS = [
-  { value: 'great', label: 'Great', emoji: '✨' },
-  { value: 'happy', label: 'Happy', emoji: '😊' },
-  { value: 'okay', label: 'Okay', emoji: '🙂' },
-  { value: 'tired', label: 'Tired', emoji: '😴' },
-  { value: 'sad', label: 'Sad', emoji: '😢' },
-  { value: 'overwhelmed', label: 'Overwhelmed', emoji: '😰' },
-  { value: 'angry', label: 'Angry', emoji: '😤' },
+  { value: 'great', label: 'Luar Biasa', emoji: '✨' },
+  { value: 'happy', label: 'Bahagia', emoji: '😊' },
+  { value: 'okay', label: 'Biasa Saja', emoji: '🙂' },
+  { value: 'tired', label: 'Lelah', emoji: '😴' },
+  { value: 'sad', label: 'Sedih', emoji: '😢' },
+  { value: 'overwhelmed', label: 'Kewalahan', emoji: '😰' },
+  { value: 'angry', label: 'Kesal', emoji: '😤' },
 ] as const;
 
 export const NEED_OPTIONS = [
-  { value: 'attention', label: 'Attention' },
-  { value: 'space', label: 'Space' },
-  { value: 'reassurance', label: 'Reassurance' },
-  { value: 'affection', label: 'Affection' },
-  { value: 'quality_time', label: 'Quality time' },
-  { value: 'help', label: 'Help' },
-  { value: 'just_listen', label: 'Just listen' },
-  { value: 'nothing_specific', label: 'Nothing specific' },
+  { value: 'attention', label: 'Perhatian' },
+  { value: 'space', label: 'Ruang Sendiri' },
+  { value: 'reassurance', label: 'Menenangkan Hati' },
+  { value: 'affection', label: 'Pelukan & Kasih Sayang' },
+  { value: 'quality_time', label: 'Waktu Bersama' },
+  { value: 'help', label: 'Bantuan' },
+  { value: 'just_listen', label: 'Cukup Dengarkan' },
+  { value: 'nothing_specific', label: 'Tidak ada yang khusus' },
 ] as const;
 
 export const MEMORY_TAGS = [
-  'First', 'Date', 'Travel', 'Random', 'Achievement', 
-  'Favorite', 'Food', 'Special Day'
+  'Pertama Kali', 'Kencan', 'Liburan', 'Spontan', 'Pencapaian', 
+  'Favorit', 'Kuliner', 'Hari Spesial'
 ] as const;
 
 export const GOAL_CATEGORIES = [
-  { value: 'travel', label: 'Travel', icon: 'Plane' },
-  { value: 'food', label: 'Food', icon: 'UtensilsCrossed' },
-  { value: 'relationship', label: 'Relationship', icon: 'Heart' },
-  { value: 'finance', label: 'Finance', icon: 'Wallet' },
-  { value: 'personal', label: 'Personal', icon: 'User' },
-  { value: 'adventure', label: 'Adventure', icon: 'Mountain' },
-  { value: 'home', label: 'Home', icon: 'Home' },
-  { value: 'random', label: 'Random', icon: 'Sparkles' },
+  { value: 'travel', label: 'Liburan', icon: 'Plane' },
+  { value: 'food', label: 'Kuliner', icon: 'UtensilsCrossed' },
+  { value: 'relationship', label: 'Hubungan', icon: 'Heart' },
+  { value: 'finance', label: 'Keuangan', icon: 'Wallet' },
+  { value: 'personal', label: 'Pribadi', icon: 'User' },
+  { value: 'adventure', label: 'Petualangan', icon: 'Mountain' },
+  { value: 'home', label: 'Rumah Impian', icon: 'Home' },
+  { value: 'random', label: 'Acak', icon: 'Sparkles' },
 ] as const;
 
 export const QUESTION_CATEGORIES = [
