@@ -7,35 +7,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ============================================================
--- HELPER FUNCTIONS
--- ============================================================
-
--- Get the couple_id for a given user
-CREATE OR REPLACE FUNCTION get_couple_id(user_uuid UUID)
-RETURNS UUID AS $$
-  SELECT couple_id FROM couple_members WHERE user_id = user_uuid LIMIT 1;
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
-
--- Check if two users are in the same couple
-CREATE OR REPLACE FUNCTION is_couple_partner(user_a UUID, user_b UUID)
-RETURNS BOOLEAN AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM couple_members cm1
-    JOIN couple_members cm2 ON cm1.couple_id = cm2.couple_id
-    WHERE cm1.user_id = user_a AND cm2.user_id = user_b
-  );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
-
--- Get the partner's user_id
-CREATE OR REPLACE FUNCTION get_partner_id(user_uuid UUID)
-RETURNS UUID AS $$
-  SELECT cm2.user_id FROM couple_members cm1
-  JOIN couple_members cm2 ON cm1.couple_id = cm2.couple_id
-  WHERE cm1.user_id = user_uuid AND cm2.user_id != user_uuid
-  LIMIT 1;
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
-
--- ============================================================
 -- CORE TABLES
 -- ============================================================
 
@@ -366,6 +337,35 @@ CREATE TABLE notifications (
 );
 
 CREATE INDEX idx_notifications_user ON notifications(user_id, is_read, created_at DESC);
+
+-- ============================================================
+-- HELPER FUNCTIONS
+-- ============================================================
+
+-- Get the couple_id for a given user
+CREATE OR REPLACE FUNCTION get_couple_id(user_uuid UUID)
+RETURNS UUID AS $$
+  SELECT couple_id FROM couple_members WHERE user_id = user_uuid LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- Check if two users are in the same couple
+CREATE OR REPLACE FUNCTION is_couple_partner(user_a UUID, user_b UUID)
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM couple_members cm1
+    JOIN couple_members cm2 ON cm1.couple_id = cm2.couple_id
+    WHERE cm1.user_id = user_a AND cm2.user_id = user_b
+  );
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
+-- Get the partner's user_id
+CREATE OR REPLACE FUNCTION get_partner_id(user_uuid UUID)
+RETURNS UUID AS $$
+  SELECT cm2.user_id FROM couple_members cm1
+  JOIN couple_members cm2 ON cm1.couple_id = cm2.couple_id
+  WHERE cm1.user_id = user_uuid AND cm2.user_id != user_uuid
+  LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
 
 -- ============================================================
 -- ROW LEVEL SECURITY
