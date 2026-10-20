@@ -1,69 +1,131 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+
+import type { Variants } from 'framer-motion';
+
+const container: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+    },
+  },
+};
+
+const lineExpand: Variants = {
+  hidden: { scaleX: 0, opacity: 0 },
+  show: {
+    scaleX: 1,
+    opacity: 1,
+    transition: {
+      duration: 1.2,
+      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+    },
+  },
+};
+
+export default function LandingPage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="relative min-h-dvh flex flex-col items-center justify-center overflow-hidden">
+      {/* Subtle warm radial gradient background */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 80% 60% at 50% 40%, hsl(20 30% 12% / 0.6), transparent)',
+        }}
+      />
+
+      {/* Main content */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="relative z-10 flex flex-col items-center px-6 text-center"
+      >
+        {/* Decorative line */}
+        <motion.div
+          variants={lineExpand}
+          className="mb-10 h-px w-16 origin-center bg-gradient-to-r from-transparent via-muted-foreground/40 to-transparent"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+
+        {/* App name */}
+        <motion.h1
+          variants={fadeUp}
+          className="font-serif text-5xl tracking-[0.25em] sm:text-6xl md:text-7xl"
+        >
+          OURS
+        </motion.h1>
+
+        {/* Headline */}
+        <motion.p
+          variants={fadeUp}
+          className="mt-5 font-serif text-xl text-secondary-foreground/80 sm:text-2xl"
+        >
+          A place that&apos;s only ours.
+        </motion.p>
+
+        {/* Subheadline */}
+        <motion.p
+          variants={fadeUp}
+          className="mt-3 max-w-xs text-sm text-muted-foreground sm:max-w-sm sm:text-base"
+        >
+          Talk, remember, grow, and build your story together.
+        </motion.p>
+
+        {/* CTA buttons */}
+        <motion.div variants={fadeUp} className="mt-10 flex w-full max-w-xs flex-col gap-3">
+          <Link href="/signup?intent=create">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex h-12 w-full items-center justify-center rounded-xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Create Our Space
+            </motion.div>
+          </Link>
+
+          <Link href="/signup?intent=join">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex h-12 w-full items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground transition-colors hover:bg-accent/10"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              Join Your Partner
+            </motion.div>
+          </Link>
+        </motion.div>
+
+        {/* Decorative line below buttons */}
+        <motion.div
+          variants={lineExpand}
+          className="mt-10 h-px w-10 origin-center bg-gradient-to-r from-transparent via-muted-foreground/25 to-transparent"
+        />
+
+        {/* Bottom text */}
+        <motion.p
+          variants={fadeUp}
+          className="mt-6 text-xs tracking-wide text-muted-foreground/60"
+        >
+          Private. Just the two of you.
+        </motion.p>
+      </motion.div>
     </div>
   );
 }
