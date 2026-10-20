@@ -266,7 +266,7 @@ export function ChatContainer({
         onToggleCamera={callState.toggleCamera}
       />
 
-      <div className="flex flex-col h-[calc(100dvh-5.25rem)] md:h-[calc(100dvh-1rem)] max-w-4xl mx-auto rounded-2xl md:rounded-3xl bg-surface/80 border border-border/40 overflow-hidden shadow-xs">
+      <div className="flex flex-col h-full w-full max-w-4xl mx-auto md:rounded-3xl bg-surface/80 md:border md:border-border/40 overflow-hidden shadow-xs">
         {/* Sub-tab Switcher: Berdua vs Grup & Topik */}
         <div className="flex items-center justify-center p-1.5 bg-card/60 border-b border-border/40">
           <div className="inline-flex rounded-xl bg-background/80 p-0.5 border border-border/40 text-xs">

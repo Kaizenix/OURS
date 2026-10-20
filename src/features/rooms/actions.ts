@@ -164,24 +164,33 @@ export async function sendEphemeralMessageAction(data: {
 }) {
   try {
     const supabase = await createClient();
+    const newRecord = {
+      room_id: data.roomId,
+      sender_name: data.senderName.trim(),
+      sender_id: data.senderId,
+      is_host: data.isHost,
+      content: data.content.trim() || null,
+      image_url: data.imageUrl || null,
+    };
+
     const { data: created, error } = await supabase
       .from('ephemeral_messages')
-      .insert({
-        room_id: data.roomId,
-        sender_name: data.senderName.trim(),
-        sender_id: data.senderId,
-        is_host: data.isHost,
-        content: data.content.trim() || null,
-        image_url: data.imageUrl || null,
-      })
+      .insert(newRecord)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
+      console.error('Error inserting ephemeral message:', error);
       return { success: false, error: error.message };
     }
 
-    return { success: true, message: created as EphemeralMessage };
+    const message = created || {
+      id: 'ephemeral_' + Date.now(),
+      ...newRecord,
+      created_at: new Date().toISOString(),
+    };
+
+    return { success: true, message: message as EphemeralMessage };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : 'Failed to send message' };
   }

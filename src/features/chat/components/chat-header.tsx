@@ -1,6 +1,7 @@
 'use client';
 
-import { Phone, Video } from 'lucide-react';
+import Link from 'next/link';
+import { Phone, Video, ArrowLeft } from 'lucide-react';
 import type { Profile } from '@/types/database';
 
 interface ChatHeaderProps {
@@ -19,8 +20,17 @@ export function ChatHeader({
   const partnerName = partnerProfile?.display_name || 'Pasangan Anda';
 
   return (
-    <div className="sticky top-0 z-30 flex items-center justify-between px-3 md:px-4 py-2.5 bg-background/95 border-b border-border/40 select-none">
-      <div className="flex items-center gap-2.5 min-w-0">
+    <div className="shrink-0 z-30 flex items-center justify-between px-3 md:px-4 py-2.5 bg-background/95 border-b border-border/40 select-none">
+      <div className="flex items-center gap-2 min-w-0">
+        {/* WhatsApp-style Back to Home button on mobile */}
+        <Link
+          href="/home"
+          aria-label="Kembali ke Beranda"
+          className="p-1.5 -ml-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors md:hidden"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+
         <div className="relative shrink-0">
           <div className="w-9 h-9 rounded-full border border-border bg-surface flex items-center justify-center font-serif text-sm font-semibold overflow-hidden shadow-xs relative">
             <span className="text-foreground/80">{partnerName.charAt(0).toUpperCase()}</span>

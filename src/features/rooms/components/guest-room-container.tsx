@@ -172,11 +172,18 @@ export function GuestRoomContainer({
         content,
       });
 
-      if (!res.success) {
+      if (res.success && res.message) {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === res.message!.id)) return prev;
+          return [...prev, res.message!];
+        });
+        setTimeout(() => scrollToBottom(true), 50);
+      } else {
         alert(res.error || 'Gagal mengirim pesan');
       }
     } catch (err) {
       console.error(err);
+      alert('Terjadi kesalahan saat mengirim pesan');
     } finally {
       setSending(false);
     }
@@ -190,7 +197,7 @@ export function GuestRoomContainer({
     try {
       const publicUrl = await uploadFileToStorage(file, 'photos', 'room_snaps');
       if (publicUrl) {
-        await sendEphemeralMessageAction({
+        const res = await sendEphemeralMessageAction({
           roomId: room.id,
           senderName: guestName,
           senderId: guestId,
@@ -198,6 +205,14 @@ export function GuestRoomContainer({
           content: '📷 Mengirim foto',
           imageUrl: publicUrl,
         });
+
+        if (res.success && res.message) {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === res.message!.id)) return prev;
+            return [...prev, res.message!];
+          });
+          setTimeout(() => scrollToBottom(true), 50);
+        }
       }
     } catch (err) {
       console.error(err);

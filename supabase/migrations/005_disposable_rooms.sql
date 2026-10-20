@@ -101,6 +101,10 @@ CREATE POLICY "Ephemeral room guests can view couple memory media"
 -- Enable realtime for ephemeral messages
 ALTER PUBLICATION supabase_realtime ADD TABLE ephemeral_messages;
 
+-- Explicit table grants for public / anon guest access
+GRANT ALL ON TABLE ephemeral_rooms TO anon, authenticated, service_role;
+GRANT ALL ON TABLE ephemeral_messages TO anon, authenticated, service_role;
+
 -- 4. Storage Buckets & Policies (Ensures photos, avatars, and voicenotes are public & accessible)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES 

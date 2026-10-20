@@ -246,7 +246,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="sticky bottom-0 z-20 bg-background/95 border-t border-border/40 select-none">
+    <div className="shrink-0 bg-background/95 border-t border-border/40 select-none pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
       {/* Hidden file pickers */}
       <input
         type="file"

@@ -16,7 +16,7 @@ export default async function ChatPage() {
   }
 
   return (
-    <div className="p-2 md:p-4 h-full">
+    <div className="h-full w-full flex flex-col overflow-hidden md:p-4">
       <Suspense fallback={<div className="p-6 text-center text-xs text-muted-foreground">Loading chat...</div>}>
         <ChatContainer
           coupleId={data.coupleId}

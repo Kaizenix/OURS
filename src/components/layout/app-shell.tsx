@@ -1,10 +1,12 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { BottomNav } from './bottom-nav';
 import { Sidebar } from './sidebar';
 import { TopHeader } from './top-header';
 import { DailyLoginModal } from '@/components/shared/daily-login-modal';
+import { cn } from '@/lib/utils';
 import type { Profile, Couple } from '@/types/database';
 
 interface CoupleContextType {
@@ -35,6 +37,9 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, profile, couple, coupleId, partner, dailyLoginData }: AppShellProps) {
+  const pathname = usePathname();
+  const isChatRoute = pathname === '/chat' || pathname.startsWith('/chat/');
+
   return (
     <CoupleContext.Provider value={{ profile, couple, coupleId, partner }}>
       <div className="h-dvh w-full flex overflow-hidden bg-background text-foreground select-none touch-manipulation">
@@ -45,11 +50,18 @@ export function AppShell({ children, profile, couple, coupleId, partner, dailyLo
 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-          {/* Mobile Top Header */}
-          <TopHeader />
+          {/* Mobile Top Header (hidden in chat for true WhatsApp immersive feel) */}
+          {!isChatRoute && <TopHeader />}
 
-          {/* Scrollable Viewport */}
-          <div className="flex-1 overflow-y-auto overscroll-y-contain pb-20 md:pb-4 will-change-scroll">
+          {/* Viewport */}
+          <div
+            className={cn(
+              'flex-1 flex flex-col',
+              isChatRoute
+                ? 'overflow-hidden p-0 pb-0'
+                : 'overflow-y-auto overscroll-y-contain pb-20 md:pb-4 will-change-scroll'
+            )}
+          >
             {children}
           </div>
 
@@ -61,10 +73,12 @@ export function AppShell({ children, profile, couple, coupleId, partner, dailyLo
             />
           )}
 
-          {/* Mobile Bottom Nav */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 z-40">
-            <BottomNav />
-          </div>
+          {/* Mobile Bottom Nav (hidden in chat so input bar sits flush with keyboard) */}
+          {!isChatRoute && (
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-40">
+              <BottomNav />
+            </div>
+          )}
         </main>
       </div>
     </CoupleContext.Provider>
