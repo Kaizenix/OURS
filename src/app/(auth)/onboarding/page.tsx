@@ -85,8 +85,13 @@ function OnboardingContent() {
       return;
     }
     setLoading(true);
+    setError('');
     try {
-      await updateProfile({ display_name: displayName.trim() });
+      const res = await updateProfile({ display_name: displayName.trim() });
+      if (!res.success) {
+        setError(res.error || 'Failed to update profile');
+        return;
+      }
       goNext();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -99,8 +104,12 @@ function OnboardingContent() {
     setLoading(true);
     setError('');
     try {
-      const result = await createCoupleSpace();
-      setGeneratedCode(result.code ?? '');
+      const res = await createCoupleSpace();
+      if (!res.success) {
+        setError(res.error || 'Failed to create couple space');
+        return;
+      }
+      setGeneratedCode(res.code ?? '');
       setIntent('create');
       goNext();
     } catch (err) {
@@ -118,7 +127,11 @@ function OnboardingContent() {
     setLoading(true);
     setError('');
     try {
-      await joinCoupleSpace(inviteCode.trim());
+      const res = await joinCoupleSpace(inviteCode.trim());
+      if (!res.success) {
+        setError(res.error || 'Failed to join space');
+        return;
+      }
       setConnected(true);
       setIntent('join');
       goNext();
