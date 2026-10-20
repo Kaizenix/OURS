@@ -1,10 +1,10 @@
 import { getMemoriesAction } from '@/features/memories/actions';
-import { MemoriesView } from '@/features/memories/components/memories-view';
+import { PhotoboothArchiveView } from '@/features/memories/components/photobooth-archive-view';
 
 export const dynamic = 'force-dynamic';
 
 export default async function MemoriesPage() {
   const memories = await getMemoriesAction();
 
-  return <MemoriesView initialMemories={memories} />;
+  return <PhotoboothArchiveView initialMemories={memories} />;
 }

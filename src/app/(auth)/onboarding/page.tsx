@@ -53,13 +53,14 @@ function OnboardingContent() {
     if (!file) return;
 
     setUploadingAvatar(true);
+    setError('');
     try {
       const url = await uploadFileToStorage(file, 'avatars', 'profiles');
       setAvatarUrl(url);
       await updateProfile({ display_name: displayName.trim(), avatar_url: url });
-    } catch {
-      const localUrl = URL.createObjectURL(file);
-      setAvatarUrl(localUrl);
+    } catch (err) {
+      console.error('Onboarding avatar upload error:', err);
+      setError('Gagal mengunggah foto profil. Kamu bisa lewati dan atur nanti di profil.');
     } finally {
       setUploadingAvatar(false);
     }

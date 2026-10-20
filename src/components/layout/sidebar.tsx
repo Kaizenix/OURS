@@ -30,13 +30,13 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { href: '/home', label: 'Beranda', icon: Home },
-  { href: '/chat', label: 'Obrolan', icon: MessageCircle },
   { href: '/daily', label: 'Harian', icon: Sun },
   { href: '/memories', label: 'Kenangan', icon: ImageIcon },
-  { href: '/us', label: 'Tentang Kita', icon: Users },
+  { href: '/us', label: 'Kita', icon: Users },
 ];
 
 const secondaryNavItems: NavItem[] = [
+  { href: '/chat', label: 'WhatsApp Chat', icon: MessageCircle },
   { href: '/us/goals', label: 'Mimpi Bersama', icon: Target },
   { href: '/us/calendar', label: 'Kalender', icon: Calendar },
   { href: '/us/notes', label: 'Surat Kecil', icon: StickyNote },

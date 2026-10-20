@@ -44,12 +44,50 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     partner = p as Parameters<typeof AppShell>[0]['partner'];
   }
 
+  // Daily login modal data
+  const todayStr = new Date().toISOString().split('T')[0];
+  const { data: checkin } = await supabase
+    .from('daily_checkins')
+    .select('id')
+    .eq('couple_id', membership.couple_id)
+    .eq('user_id', user.id)
+    .eq('checkin_date', todayStr)
+    .maybeSingle();
+
+  const { data: dailyQ } = await supabase
+    .from('daily_questions')
+    .select('id, question:question_bank(*)')
+    .eq('couple_id', membership.couple_id)
+    .eq('question_date', todayStr)
+    .maybeSingle();
+
+  let userAnswer = null;
+  if (dailyQ) {
+    const { data: ans } = await supabase
+      .from('daily_answers')
+      .select('*')
+      .eq('daily_question_id', dailyQ.id)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    userAnswer = ans;
+  }
+
+  const dailyLoginData = {
+    hasCheckedInToday: !!checkin,
+    todayQuestion: dailyQ ? {
+      id: dailyQ.id,
+      question: (dailyQ as any).question,
+      userAnswer,
+    } : null,
+  };
+
   return (
     <AppShell
       profile={profile}
       couple={membership.couples as unknown as Parameters<typeof AppShell>[0]['couple']}
       coupleId={membership.couple_id}
       partner={partner}
+      dailyLoginData={dailyLoginData}
     >
       {children}
     </AppShell>

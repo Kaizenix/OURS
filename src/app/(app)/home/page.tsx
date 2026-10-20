@@ -1,6 +1,7 @@
 import { getHomeDashboardData } from '@/features/home/actions';
 import { getLatestSnap } from '@/features/locket/actions';
 import { HeroSection } from '@/features/home/components/hero-section';
+import { WhatsAppChatCard } from '@/features/home/components/whatsapp-chat-card';
 import { LocketWidget } from '@/features/locket/components/locket-widget';
 import { PartnerMoodCard } from '@/features/home/components/partner-mood-card';
 import { LittleNoteCard } from '@/features/home/components/little-note-card';
@@ -33,6 +34,8 @@ export default async function HomePage() {
     todayQuestion,
     nextEvent,
     recentMemory,
+    latestMessage,
+    unreadCount,
   } = data;
 
   return (
@@ -44,7 +47,14 @@ export default async function HomePage() {
         couple={couple}
       />
 
-      {/* 2. Locket Widget (Live Instant Photo / Instagram-style Snap) */}
+      {/* 2. WhatsApp-Style Direct Chat Card */}
+      <WhatsAppChatCard
+        partnerProfile={partnerProfile}
+        latestMessage={latestMessage}
+        unreadCount={unreadCount}
+      />
+
+      {/* 3. Locket Widget (Live Instant Photo / Instagram-style Snap) */}
       <LocketWidget
         coupleId={couple.id}
         initialSnap={latestSnap}
@@ -52,7 +62,7 @@ export default async function HomePage() {
         partnerProfile={partnerProfile}
       />
 
-      {/* 3. Grid of cards */}
+      {/* 4. Grid of cards: Suasana Hati Pasangan & Relationship Highlights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 md:gap-5">
         {/* Partner Mood from latest check-in */}
         <PartnerMoodCard
@@ -70,7 +80,7 @@ export default async function HomePage() {
         <NextDateCard nextEvent={nextEvent} />
       </div>
 
-      {/* 4. Full-width: Recent Memory */}
+      {/* 5. Full-width: Recent Memory */}
       <div className="w-full">
         <RecentMemoryCard memory={recentMemory} />
       </div>

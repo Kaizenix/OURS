@@ -49,11 +49,13 @@ export function EditProfileDialog({
     if (!file) return;
 
     setUploadingAvatar(true);
+    setError('');
     try {
       const url = await uploadFileToStorage(file, 'avatars', 'profiles');
       setAvatarUrl(url);
-    } catch {
-      setAvatarUrl(URL.createObjectURL(file));
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+      setError('Gagal mengunggah avatar ke storage. Pastikan bucket storage telah dibuat di Supabase.');
     } finally {
       setUploadingAvatar(false);
     }

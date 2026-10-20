@@ -22,19 +22,18 @@ export function ChatHeader({
     <div className="sticky top-0 z-30 flex items-center justify-between px-3 md:px-4 py-2.5 bg-background/95 border-b border-border/40 select-none">
       <div className="flex items-center gap-2.5 min-w-0">
         <div className="relative shrink-0">
-          <div className="w-9 h-9 rounded-full border border-border bg-surface flex items-center justify-center font-serif text-sm font-medium overflow-hidden shadow-xs">
-            {partnerProfile?.avatar_url ? (
+          <div className="w-9 h-9 rounded-full border border-border bg-surface flex items-center justify-center font-serif text-sm font-semibold overflow-hidden shadow-xs relative">
+            <span className="text-foreground/80">{partnerName.charAt(0).toUpperCase()}</span>
+            {partnerProfile?.avatar_url && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={partnerProfile.avatar_url}
                 alt={partnerName}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover absolute inset-0"
                 onError={(e) => {
                   (e.target as HTMLElement).style.display = 'none';
                 }}
               />
-            ) : (
-              <span>{partnerName.charAt(0).toUpperCase()}</span>
             )}
           </div>
           <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-background" />

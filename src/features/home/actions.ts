@@ -28,6 +28,15 @@ export interface HomeDashboardData {
   } | null;
   nextEvent: CalendarEvent | null;
   recentMemory: MemoryWithMedia | null;
+  latestMessage: {
+    id: string;
+    sender_id: string;
+    content: string | null;
+    media_url: string | null;
+    message_type: string;
+    created_at: string;
+  } | null;
+  unreadCount: number;
 }
 
 export async function getHomeDashboardData(): Promise<HomeDashboardData | null> {
@@ -175,6 +184,27 @@ export async function getHomeDashboardData(): Promise<HomeDashboardData | null> 
     ? (memories[0] as unknown as MemoryWithMedia)
     : null;
 
+  // 9. Latest Chat Message & Unread Count (WhatsApp-style card in Home)
+  const { data: latestMsgs } = await supabase
+    .from('messages')
+    .select('id, sender_id, content, media_url, message_type, created_at')
+    .eq('couple_id', coupleId)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  const latestMessage = latestMsgs && latestMsgs.length > 0 ? latestMsgs[0] : null;
+
+  let unreadCount = 0;
+  if (partnerProfile) {
+    const { count } = await supabase
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('couple_id', coupleId)
+      .eq('sender_id', partnerProfile.id)
+      .eq('read', false);
+    unreadCount = count || 0;
+  }
+
   return {
     userProfile,
     partnerProfile,
@@ -185,6 +215,8 @@ export async function getHomeDashboardData(): Promise<HomeDashboardData | null> 
     todayQuestion: todayQuestionData,
     nextEvent,
     recentMemory,
+    latestMessage,
+    unreadCount,
   };
 }
 

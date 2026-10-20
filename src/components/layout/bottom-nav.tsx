@@ -15,7 +15,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/home', label: 'Beranda', icon: Home },
-  { href: '/chat', label: 'Obrolan', icon: MessageCircle },
   { href: '/daily', label: 'Harian', icon: Sun },
   { href: '/memories', label: 'Kenangan', icon: ImageIcon },
   { href: '/us', label: 'Kita', icon: Users },

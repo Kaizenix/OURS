@@ -15,7 +15,7 @@ import {
 import { ChatHeader } from './chat-header';
 import { MessageBubble } from './message-bubble';
 import { ChatInput } from './chat-input';
-import { GroupChatView } from './group-chat-view';
+import { DisposableRoomManager } from '@/features/rooms/components/disposable-room-manager';
 import { useWebRTCCall } from '@/features/call/hooks/use-webrtc-call';
 import { CallModal } from '@/features/call/components/call-modal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -290,13 +290,13 @@ export function ChatContainer({
               }`}
             >
               <Users className="w-3.5 h-3.5" />
-              <span>Grup & Saluran</span>
+              <span>Room 1x Pakai</span>
             </button>
           </div>
         </div>
 
         {activeTab === 'groups' ? (
-          <GroupChatView
+          <DisposableRoomManager
             coupleId={coupleId}
             userProfile={userProfile}
             partnerProfile={partnerProfile}
